@@ -1066,9 +1066,9 @@ void iptables_rule()  // handles -a -g --gen-add  --keep-rule --clear --wait-loc
 		if(raw_mode==mode_icmp)
 		{
 			if(raw_ip_version==AF_INET)
-				sprintf(tmp_pattern,"-s %s -p icmp --icmp-type 0",remote_addr.get_ip());
+				sprintf(tmp_pattern,"-s %s -p icmp --icmp-type 0x00/0x55",remote_addr.get_ip());
 			else
-				sprintf(tmp_pattern,"-s %s -p icmpv6 --icmpv6-type 129",remote_addr.get_ip());
+				sprintf(tmp_pattern,"-s %s -p icmpv6 --icmpv6-type 0x81/0x55",remote_addr.get_ip());
 		}
 		pattern+=tmp_pattern;
 	}
@@ -1104,9 +1104,9 @@ void iptables_rule()  // handles -a -g --gen-add  --keep-rule --clear --wait-loc
 		if(raw_mode==mode_icmp)
 		{
 			if(raw_ip_version==AF_INET)
-				sprintf(tmp_pattern,"-p icmp --icmp-type 8");
+				sprintf(tmp_pattern,"-p icmp --icmp-type 0x08/0x55");
 			else
-				sprintf(tmp_pattern,"-p icmpv6 --icmpv6-type 128");
+				sprintf(tmp_pattern,"-p icmpv6 --icmpv6-type 0x80/0x55");
 		}
 		pattern+=tmp_pattern;
 	}
@@ -1482,7 +1482,7 @@ void iptables_rule()  // handles -a -g --gen-add  --keep-rule --clear --wait-loc
 			if(raw_mode==mode_udp)
 				printf("iptables -I INPUT -s %s -p udp -m udp --sport %d -j DROP\n",remote_addr.get_ip(),remote_addr.get_port());
 			if(raw_mode==mode_icmp)
-				printf("iptables -I INPUT -s %s -p icmp --icmp-type 0 -j DROP\n",remote_addr.get_ip());
+				printf("iptables -I INPUT -s %s -p icmp --icmp-type 0x00/0x55 -j DROP\n",remote_addr.get_ip());
 			printf("\n");
 		}
 		else
@@ -1493,7 +1493,7 @@ void iptables_rule()  // handles -a -g --gen-add  --keep-rule --clear --wait-loc
 			if(raw_mode==mode_udp)
 				printf("ip6tables -I INPUT -s %s -p udp -m udp --sport %d -j DROP\n",remote_addr.get_ip(),remote_addr.get_port());
 			if(raw_mode==mode_icmp)
-				printf("ip6tables -I INPUT -s %s -p -p icmpv6 --icmpv6-type 129 -j DROP\n",remote_addr.get_ip());
+				printf("ip6tables -I INPUT -s %s -p -p icmpv6 --icmpv6-type 0x81/0x55 -j DROP\n",remote_addr.get_ip());
 			printf("\n");
 		}
 
@@ -1537,8 +1537,8 @@ void iptables_rule()  // handles -a -g --gen-add  --keep-rule --clear --wait-loc
 
 			if(raw_mode==mode_icmp)
 			{
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV4 dir=in remoteip=%s action=block\n",remote_addr.get_ip());
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV4 dir=out remoteip=%s action=block\n",remote_addr.get_ip());
+				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV4:8,85 dir=in remoteip=%s action=block\n",remote_addr.get_ip());
+				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV4:8,85 dir=out remoteip=%s action=block\n",remote_addr.get_ip());
 			}
 		}
 		else
@@ -1557,8 +1557,8 @@ void iptables_rule()  // handles -a -g --gen-add  --keep-rule --clear --wait-loc
 
 			if(raw_mode==mode_icmp)
 			{
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV6 dir=in remoteip=%s action=block\n",remote_addr.get_ip());
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV6 dir=out remoteip=%s action=block\n",remote_addr.get_ip());
+				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV6:128,85 dir=in remoteip=%s action=block\n",remote_addr.get_ip());
+				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV6:128,85 dir=out remoteip=%s action=block\n",remote_addr.get_ip());
 			}
 		}
 
