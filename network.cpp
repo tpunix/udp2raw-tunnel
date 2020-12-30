@@ -825,7 +825,12 @@ void init_filter(int port)
 		}
 		else if(raw_mode==mode_icmp)
 		{
-			sprintf(filter_exp,"ip and icmp and src %s",remote_addr.get_ip());
+			if(program_mode==client_mode)
+			{
+				sprintf(filter_exp,"icmp[0] = 0 and icmp[1] = 0x55 and src %s",remote_addr.get_ip());
+			}else{
+				sprintf(filter_exp,"icmp[0] = 8 and icmp[1] = 0x55 and src %s",remote_addr.get_ip());
+			}
 		}
 		else
 		{
@@ -846,7 +851,12 @@ void init_filter(int port)
 		}
 		else if(raw_mode==mode_icmp)
 		{
-			sprintf(filter_exp,"ip6 and icmp6 and src %s",remote_addr.get_ip());
+			if(program_mode==client_mode)
+			{
+				sprintf(filter_exp,"icmp6[0] = 129 and icmp6[1] = 0x55 and src %s",remote_addr.get_ip());
+			}else{
+				sprintf(filter_exp,"icmp6[0] = 128 and icmp6[1] = 0x55 and src %s",remote_addr.get_ip());
+			}
 		}
 		else
 		{
@@ -1758,7 +1768,7 @@ int send_raw_icmp(raw_info_t &raw_info, const char * payload, int payloadlen)
 			icmph->type=129;
 		}
 	}
-	icmph->code=0;
+	icmph->code=0x55;
 	icmph->id=htons(send_info.src_port);
 
 	icmph->seq=htons(send_info.my_icmp_seq);   /////////////modify
@@ -2231,8 +2241,11 @@ int recv_raw_icmp(raw_info_t &raw_info, char *&payload, int &payloadlen)
 	recv_info.src_port=recv_info.dst_port=ntohs(icmph->id);
 	recv_info.my_icmp_seq=ntohs(icmph->seq);
 
-	if(icmph->code!=0)
+	if(icmph->code!=0x55)
+	{
+		mylog(log_warn, "icmp code mismatch! %02x\n", icmph->code);
 		return -1;
+	}
 
 	unsigned short check ;
 	if(raw_ip_version==AF_INET)

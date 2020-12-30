@@ -1522,43 +1522,20 @@ void iptables_rule()  // handles -a -g --gen-add  --keep-rule --clear --wait-loc
 		printf("\n");
 
 		log_bare(log_warn,"for windows vista and above use:\n");
-		if(raw_ip_version==AF_INET)
+		if(raw_mode==mode_faketcp)
+			printf("netsh advfirewall firewall add rule name=udp2raw protocol=TCP dir=in remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
+		if(raw_mode==mode_udp)
+			printf("netsh advfirewall firewall add rule name=udp2raw protocol=UDP dir=in remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
+		if(raw_mode==mode_icmp)
 		{
-			if(raw_mode==mode_faketcp)
+			if(raw_ip_version==AF_INET)
 			{
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=TCP dir=in remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=TCP dir=out remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
+				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV4:0,85 dir=in remoteip=%s action=block\n",remote_addr.get_ip());
 			}
-			if(raw_mode==mode_udp)
+			else
 			{
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=UDP dir=in remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=UDP dir=out remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
-			}
-
-			if(raw_mode==mode_icmp)
-			{
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV4:8,85 dir=in remoteip=%s action=block\n",remote_addr.get_ip());
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV4:8,85 dir=out remoteip=%s action=block\n",remote_addr.get_ip());
-			}
-		}
-		else
-		{
-			assert(raw_ip_version==AF_INET6);
-			if(raw_mode==mode_faketcp)
-			{
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=TCP dir=in remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=TCP dir=out remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
-			}
-			if(raw_mode==mode_udp)
-			{
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=UDP dir=in remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=UDP dir=out remoteip=%s remoteport=%d action=block\n",remote_addr.get_ip(),remote_addr.get_port());
-			}
-
-			if(raw_mode==mode_icmp)
-			{
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV6:128,85 dir=in remoteip=%s action=block\n",remote_addr.get_ip());
-				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV6:128,85 dir=out remoteip=%s action=block\n",remote_addr.get_ip());
+				assert(raw_ip_version==AF_INET6);
+				printf("netsh advfirewall firewall add rule name=udp2raw protocol=ICMPV6:129,85 dir=in remoteip=%s action=block\n",remote_addr.get_ip());
 			}
 		}
 
