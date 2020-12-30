@@ -126,8 +126,8 @@ release_mp:${TARGETS_MP}
 
 clean:	
 	rm -f ${TAR}
-	rm -f ${NAME} ${NAME}_cross ${NAME}.exe ${NAME}_wepoll.exe ${NAME}_mac
-	rm -f ${NAME}_mp_binaries.tar.gz ${NAME}_mp.exe ${NAME}_mp_wepoll.exe ${NAME}_mp_mac
+	rm -f ${NAME} ${NAME}_cross ${NAME}_mac
+	rm -f ${NAME}_mp_binaries.tar.gz *.exe ${NAME}_mp_mac
 	rm -f git_version.h
 
 git_version:
